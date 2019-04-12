@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 def make_new_color():
 	return [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
 
-def speed_detection(video_name, y_n):
+def speed_detection(input_name, output_name, y_n):
 	count = 0
 
-	cap = cv2.VideoCapture(video_name)
+	cap = cv2.VideoCapture(input_name)
 
 	face_cascade = cv2.CascadeClassifier('frontalface.xml')
 	# tracking face using their centroids, maintaining a centroid list of all faces present in a frame
@@ -18,11 +18,10 @@ def speed_detection(video_name, y_n):
 	face_count = 0
 
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-	out = cv2.VideoWriter('output.avi',fourcc, cv2.CAP_PROP_FPS,(int(cap.get(3)),int(cap.get(4))))
+	out = cv2.VideoWriter(output_name, fourcc, cv2.CAP_PROP_FPS, (int(cap.get(3)),int(cap.get(4))))
 
 	listofspeeds = [];
 
-	# loop runs if capturing has been initialized.
 	while True:
 		center1 = []
 		center2 = []
@@ -119,7 +118,7 @@ def speed_detection(video_name, y_n):
 
 		centroids_list = deque([face_data for face_data in list(centroids_list) if count - face_data[0] < 10])
 
-		if video_name == "0" or y_n == 'n':
+		if input_name == "0" or y_n == 'n':
 			cv2.imshow('video2', image)
 		out.write(image)
 
@@ -145,9 +144,10 @@ def speed_detection(video_name, y_n):
 	return (encountered, speed, colors)
 
 if __name__=='__main__':
-	video_name = input('Enter the name of the video: ')
-	y_n = input('Would you like to suppress the output? (y/n) ')
-	encountered, speed, colors = speed_detection(video_name, y_n)
+	input_name = input('Enter the name of the input video: ')
+	output_name = input('Enter the name of the output video (*.avi): ')
+	y_n = input('Would you like to suppress streaming of the output? (y/n) ')
+	encountered, speed, colors = speed_detection(input_name, output_name, y_n)
 	plt.figure()
 	for i in range(1,len(speed)):
 		plt.plot(speed[i], label="speed of tracker "+str(encountered[i]), color= (colors[i][0]/255, colors[i][1]/255, colors[i][2]/255))
