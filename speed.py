@@ -3,6 +3,7 @@ import numpy as np
 import random
 from collections import deque
 import matplotlib.pyplot as plt
+import os
 
 def make_new_color():
 	return [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
@@ -79,7 +80,7 @@ def speed_detection(input_name, output_name, y_n):
 					if centroids_list[idx][6][-1] != 0.0:
 						cv2.rectangle(image, (xA, yA), (xB, yB), centroid_data[1], 2)
 						cv2.putText(image, str(centroids_list[idx][6][-1]),
-									(xA, yA), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (np.average(centroid_data[1])/2), 1, cv2.LINE_AA)
+									(xA, yA), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
 					centroids_list[idx][0] = count
 					break
 
@@ -105,7 +106,7 @@ def speed_detection(input_name, output_name, y_n):
 					#			(centroid_data[2][0], centroid_data[2][1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, centroid_data[1], 1,
 					#			cv2.LINE_AA)
 					cv2.putText(image, str(centroids_list[idx][6][-1]),
-								(centroid_data[2][0], centroid_data[2][1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (np.average(centroid_data[1])/2), 1,
+								(centroid_data[2][0], centroid_data[2][1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1,
 								cv2.LINE_AA)
 				if centroids_list[idx][4] == 0:
 					centroids_list[idx][5] = "unlocked"
@@ -114,7 +115,7 @@ def speed_detection(input_name, output_name, y_n):
 
 			if count - centroid_data[0] == 10:
 				if sum(centroid_data[6]) / len(centroid_data[6]) != 0.0:
-					listofspeeds.append( (centroid_data[7], centroid_data[6], centroid_data[1]) );
+					listofspeeds.append( (centroid_data[7], centroid_data[6], centroid_data[1], count) );
 
 		centroids_list = deque([face_data for face_data in list(centroids_list) if count - face_data[0] < 10])
 
@@ -134,24 +135,33 @@ def speed_detection(input_name, output_name, y_n):
 	encountered = []
 	speed = []
 	colors = []
+	counts = []
 	for i in range(1,len(listofspeeds)):
 		j = len(listofspeeds) - i;
 		if (listofspeeds[j][0] not in encountered) and (len(listofspeeds[j][1])>3):
 			encountered.append(listofspeeds[j][0])
 			speed.append(listofspeeds[j][1])
 			colors.append(listofspeeds[j][2])
+			counts.append(listofspeeds[j][3])
 
-	return (encountered, speed, colors)
+	return (encountered, speed, colors, counts)
 
 if __name__=='__main__':
-	input_name = input('Enter the name of the input video: ')
-	output_name = input('Enter the name of the output video (*.avi): ')
-	y_n = input('Would you like to suppress streaming of the output? (y/n) ')
-	encountered, speed, colors = speed_detection(input_name, output_name, y_n)
-	plt.figure()
-	for i in range(1,len(speed)):
-		plt.plot(speed[i], label="speed of tracker "+str(encountered[i]), color= (colors[i][0]/255, colors[i][1]/255, colors[i][2]/255))
 
-	plt.legend()
-	plt.savefig('graph.png')
-	plt.show()
+	input_name = input('Enter the name of the input video: ')
+	output_name = 'processed - '+input_name+'.avi'
+	y_n = input('Would you like to suppress streaming of the output? (y/n): ')
+	y_n2 = input('Would you like to see graphs generated from the input? (y/n): ')
+
+	encountered, speed, colors, counts = speed_detection(input_name, output_name, y_n)
+
+	if y_n2 == 'y':
+		pathname = 'output - '+input_name
+		if not os.path.exists(pathname):
+			os.makedirs(pathname)
+
+		for i in range(1,len(speed)):
+			plt.figure()
+			plt.plot(speed[i], label="speed of tracker "+str(encountered[i]), color= (colors[i][0]/255, colors[i][1]/255, colors[i][2]/255))
+			plt.legend()
+			plt.savefig(pathname+'/graph '+input_name+' '+str(i)+'.png')
