@@ -65,7 +65,7 @@ def speed_detection(input_name, output_name, y_n):
 					not_matched = False
 					centroids_list[idx][4] = 5
 					centroids_list[idx][2] = [xA, yA, xB, yB]
-					centroids_list[idx][6].append(np.sqrt(X ** 2 + Y ** 2) * 0.5)
+					centroids_list[idx][6].append(np.sqrt(X ** 2 + Y ** 2) * 0.25)
 					if centroids_list[idx][5] == "unlocked":
 
 						if centroids_list[idx][0] == count - 1:
@@ -79,7 +79,7 @@ def speed_detection(input_name, output_name, y_n):
 						centroids_list[idx][3] = 0
 					if centroids_list[idx][6][-1] != 0.0:
 						cv2.rectangle(image, (xA, yA), (xB, yB), centroid_data[1], 2)
-						cv2.putText(image, str(centroids_list[idx][6][-1]),
+						cv2.putText(image, str(round(centroids_list[idx][6][-1],2)),
 									(xA, yA), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
 					centroids_list[idx][0] = count
 					break
@@ -102,10 +102,7 @@ def speed_detection(input_name, output_name, y_n):
 				if centroids_list[idx][6][-1] != 0.0:
 					cv2.rectangle(image, (centroid_data[2][0], centroid_data[2][1]), (centroid_data[2][2], centroid_data[2][3]),
 								  centroid_data[1], 2)
-					# cv2.putText(image, str(centroids_list[idx][6][-1]),
-					#			(centroid_data[2][0], centroid_data[2][1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, centroid_data[1], 1,
-					#			cv2.LINE_AA)
-					cv2.putText(image, str(centroids_list[idx][6][-1]),
+					cv2.putText(image, str(round(centroids_list[idx][6][-1],2)),
 								(centroid_data[2][0], centroid_data[2][1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1,
 								cv2.LINE_AA)
 				if centroids_list[idx][4] == 0:
@@ -138,7 +135,7 @@ def speed_detection(input_name, output_name, y_n):
 	counts = []
 	for i in range(1,len(listofspeeds)):
 		j = len(listofspeeds) - i;
-		if (listofspeeds[j][0] not in encountered) and (len(listofspeeds[j][1])>3):
+		if (listofspeeds[j][0] not in encountered):
 			encountered.append(listofspeeds[j][0])
 			speed.append(listofspeeds[j][1])
 			colors.append(listofspeeds[j][2])
