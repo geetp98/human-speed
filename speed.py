@@ -145,7 +145,6 @@ def speed_detection(input_name, output_name, y_n):
 if __name__=='__main__':
 
 	input_name = input('Enter the name of the input video: ')
-	input_path = os.path.abspath(input_name)
 	filename_abs = os.path.splitext(input_name)[0]
 	output_name = 'processed-'+filename_abs+'.avi'
 
@@ -154,6 +153,7 @@ if __name__=='__main__':
 
 	encountered, speed, colors = speed_detection(input_name, output_name, y_n)
 	pathname = 'output-'+filename_abs
+	desktop = os.path.expanduser("~/Desktop")
 
 	if y_n2 == 'y':
 		if not os.path.exists(pathname):
@@ -165,16 +165,15 @@ if __name__=='__main__':
 			plt.legend()
 			plt.savefig(pathname+'/graph '+input_name+' '+str(i)+'.png')
 
-	# To copy video on the desktop
-	desktop = os.path.expanduser("~/Desktop")
-	cmd1 = 'cp '+output_name+' '+desktop
-	os.system(cmd1)
+		# To copy graph folder on the desktop
+		desktop_path = desktop+'/'+pathname
+		if not os.path.exists(desktop_path):
+			os.makedirs(desktop_path)
+			cmd1 = 'cp '+pathname+'/* '+desktop_path+'/'
+			os.system(cmd1)
 
-	# To copy graph folder on the desktop
-	desktop_path = desktop+'/'+pathname
-	if not os.path.exists(desktop_path):
-		os.makedirs(desktop_path)
-	cmd2 = 'cp '+pathname+'/* '+desktop_path+'/'
+	# To copy video on the desktop
+	cmd2 = 'cp '+output_name+' '+desktop
 	os.system(cmd2)
 
 	# Remove files in the pwd
