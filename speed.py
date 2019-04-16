@@ -112,7 +112,7 @@ def speed_detection(input_name, output_name, y_n):
 
 			if count - centroid_data[0] == 10:
 				if sum(centroid_data[6]) / len(centroid_data[6]) != 0.0:
-					listofspeeds.append( (centroid_data[7], centroid_data[6], centroid_data[1], count) );
+					listofspeeds.append( (centroid_data[7], centroid_data[6], centroid_data[1]) );
 
 		centroids_list = deque([face_data for face_data in list(centroids_list) if count - face_data[0] < 10])
 
@@ -126,34 +126,36 @@ def speed_detection(input_name, output_name, y_n):
 
 		count += 1
 
+	cv2.destroyAllWindows()
 	cap.release()
 	out.release()
 
 	encountered = []
 	speed = []
 	colors = []
-	counts = []
 	for i in range(1,len(listofspeeds)):
 		j = len(listofspeeds) - i;
-		if (listofspeeds[j][0] not in encountered) and (len(listofspeeds[j][1])>2):
+		if (listofspeeds[j][0] not in encountered) and (len(listofspeeds[j][1])>3):
 			encountered.append(listofspeeds[j][0])
 			speed.append(listofspeeds[j][1])
 			colors.append(listofspeeds[j][2])
-			counts.append(listofspeeds[j][3])
 
-	return (encountered, speed, colors, counts)
+	return (encountered, speed, colors)
 
 if __name__=='__main__':
 
 	input_name = input('Enter the name of the input video: ')
-	output_name = 'processed - '+input_name+'.avi'
+	input_path = os.path.abspath(input_name)
+	filename_abs = os.path.splitext(input_name)[0]
+	output_name = 'processed-'+filename_abs+'.avi'
+
 	y_n = input('Would you like to suppress streaming of the output? (y/n): ')
 	y_n2 = input('Would you like to see graphs generated from the input? (y/n): ')
 
-	encountered, speed, colors, counts = speed_detection(input_name, output_name, y_n)
+	encountered, speed, colors = speed_detection(input_name, output_name, y_n)
+	pathname = 'output-'+filename_abs
 
 	if y_n2 == 'y':
-		pathname = 'output - '+input_name
 		if not os.path.exists(pathname):
 			os.makedirs(pathname)
 
@@ -162,3 +164,21 @@ if __name__=='__main__':
 			plt.plot(speed[i], label="speed of tracker "+str(encountered[i]), color= (colors[i][0]/255, colors[i][1]/255, colors[i][2]/255))
 			plt.legend()
 			plt.savefig(pathname+'/graph '+input_name+' '+str(i)+'.png')
+
+	# To copy video on the desktop
+	desktop = os.path.expanduser("~/Desktop")
+	cmd1 = 'cp '+output_name+' '+desktop
+	os.system(cmd1)
+
+	# To copy graph folder on the desktop
+	desktop_path = desktop+'/'+pathname
+	if not os.path.exists(desktop_path):
+		os.makedirs(desktop_path)
+	cmd2 = 'cp '+pathname+'/* '+desktop_path+'/'
+	os.system(cmd2)
+
+	# Remove files in the pwd
+	cmd3 = 'rm '+output_name
+	os.system(cmd3)
+	cmd4 = 'rm -r '+pathname
+	os.system(cmd4)
