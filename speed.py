@@ -135,7 +135,7 @@ def speed_detection(input_name, output_name, y_n):
 	counts = []
 	for i in range(1,len(listofspeeds)):
 		j = len(listofspeeds) - i;
-		if (listofspeeds[j][0] not in encountered):
+		if (listofspeeds[j][0] not in encountered) and (len(listofspeeds[j][1])>2):
 			encountered.append(listofspeeds[j][0])
 			speed.append(listofspeeds[j][1])
 			colors.append(listofspeeds[j][2])
