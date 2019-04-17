@@ -145,10 +145,16 @@ def speed_detection(input_name, output_name, y_n):
 if __name__=='__main__':
 
 	input_name = input('Enter the name of the input video: ')
-	filename_abs = os.path.splitext(input_name)[0]
-	output_name = 'processed-'+filename_abs+'.avi'
+	if input_name == '0':
+		input_name = int(input_name)
+		filename_abs = 'webcam'
+		output_name = 'processed-'+filename_abs+'.avi'
+		y_n = 'n'
+	else:
+		filename_abs = os.path.splitext(input_name)[0]
+		output_name = 'processed-'+filename_abs+'.avi'
+		y_n = input('Would you like to suppress streaming of the output? (y/n): ')
 
-	y_n = input('Would you like to suppress streaming of the output? (y/n): ')
 	y_n2 = input('Would you like to see graphs generated from the input? (y/n): ')
 
 	encountered, speed, colors = speed_detection(input_name, output_name, y_n)
@@ -159,11 +165,12 @@ if __name__=='__main__':
 		if not os.path.exists(pathname):
 			os.makedirs(pathname)
 
+		# print(len(speed))
 		for i in range(1,len(speed)):
 			plt.figure()
 			plt.plot(speed[i], label="speed of tracker "+str(encountered[i]), color= (colors[i][0]/255, colors[i][1]/255, colors[i][2]/255))
 			plt.legend()
-			plt.savefig(pathname+'/graph '+input_name+' '+str(i)+'.png')
+			plt.savefig(pathname+'/graph '+str(input_name)+' '+str(i)+'.png')
 
 		# To copy graph folder on the desktop
 		desktop_path = desktop+'/'+pathname
@@ -171,13 +178,19 @@ if __name__=='__main__':
 			os.makedirs(desktop_path)
 			cmd1 = 'cp '+pathname+'/* '+desktop_path+'/'
 			os.system(cmd1)
+			# print(cmd1)
 
 	# To copy video on the desktop
 	cmd2 = 'cp '+output_name+' '+desktop
 	os.system(cmd2)
+	# print(cmd2)
 
 	# Remove files in the pwd
 	cmd3 = 'rm '+output_name
 	os.system(cmd3)
+	# print(cmd3)
 	cmd4 = 'rm -r '+pathname
 	os.system(cmd4)
+	# print(cmd4)
+
+	print('done')
