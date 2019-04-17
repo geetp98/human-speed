@@ -1,0 +1,49 @@
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0rem 0rem;
+  font: 1rem/1.5 "PT Sans", Arial, sans-serif;
+  color: #5a5a5a;
+  background-image:url("1.png");
+  background-repeat: no-repeat;
+  background-size: 100% 150%;
+}
+
+.center{
+ padding:10rem 25rem;
+}
+
+
+.use:hover{
+  border-bottom: 2px solid white;
+}
+
+#myModal{
+  width: '70%'
+}
+
+.modal-title{
+  text-align: center;
+}
+
+.navbar-header:hover{
+  cursor: pointer;
+}
+
+.button{
+  transition: transform 2s;
+  width: 50px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.button:hover{
+  transform: scale(1.03);
+}
