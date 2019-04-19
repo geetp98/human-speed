@@ -20,6 +20,34 @@ y_n = sys.argv[2];
 y_n2 = sys.argv[3];
 cap = cv2.VideoCapture(input_name)
 
+if os.path.isfile(input_name)==False:
+	exit(0)
+
+if(input_name.endswith('mp4') or input_name.endswith('m4v') or input_name.endswith('avi') or input_name.endswith('mkv')):
+	pass
+else:
+	exit(0)
+
+cap = cv2.VideoCapture(input_name)
+frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+if frameCount<=5 or frameCount>200:
+	exit(0)
+
+fps_var = int(cap.get(cv2.CAP_PROP_FPS))
+if fps_var<5 or fps_var>10:
+	exit(0)
+
+if y_n=='Y' or y_n=='y' or y_n=='N' or y_n=='n':
+	if y_n2=='Y' or y_n2=='y' or y_n2=='N' or y_n2=='n':
+		pass
+	else:
+		exit(0)
+else:
+	exit(0)
+# print(input_name)
+
+
 face_cascade = cv2.CascadeClassifier('frontalface.xml')
 # tracking face using their centroids, maintaining a centroid list of all faces present in a frame
 centroids_list = deque([])

@@ -22,9 +22,13 @@ class UploadVideo extends Component {
   }
 
   handleFileInput = (e) => {
-    console.log(document.getElementById('file').files[0]);
-    if(e.target.value !== null)
-      this.setState({inputFileName: document.getElementById('file').files[0].name});
+    if(document.getElementById('file').files[0]){
+        this.setState({inputFileName: document.getElementById('file').files[0].name});
+    }
+    else{
+        this.setState({inputFileName: ''});
+    }
+
   }
 
   handleOutput = (e) => {
